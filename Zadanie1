@@ -26,7 +26,6 @@ const fetchData = (url) => {
     });
 };
 
-//Задание 3
 const getSortedPostsCallback = () => {
   const url = `${BASE_URL}/posts`;
 
@@ -55,6 +54,6 @@ const getSortedCommentsCallback = () => {
   });
 };
 
-Вызов:
+//Вызов:
 getSortedPostsCallback();
 getSortedCommentsCallback();
