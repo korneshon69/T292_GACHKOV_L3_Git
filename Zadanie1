@@ -1,0 +1,60 @@
+const BASE_URL = 'https://jsonplaceholder.typicode.com';
+
+const fetchWithCallback = (url, callback) => {
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      callback(null, data);
+    })
+    .catch(error => {
+      callback(error, null);
+    });
+};
+
+const fetchData = (url) => {
+  return fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    });
+};
+
+//Задание 3
+const getSortedPostsCallback = () => {
+  const url = `${BASE_URL}/posts`;
+
+  fetchWithCallback(url, (error, posts) => {
+    if (error) {
+      console.error('Ошибка в getSortedPostsCallback:', error.message);
+      return;
+    }
+    const sortedPosts = sortPostsByTitleLengthDesc(posts);
+    console.log('Посты, отсортированные по длине title (Callback)');
+    console.log(sortedPosts);
+  });
+};
+
+const getSortedCommentsCallback = () => {
+  const url = `${BASE_URL}/comments`;
+
+  fetchWithCallback(url, (error, comments) => {
+    if (error) {
+      console.error('Ошибка в getSortedCommentsCallback:', error.message);
+      return;
+    }
+    const sortedComments = sortCommentsByName(comments);
+    console.log('Комментарии, отсортированные по имени (Callback)');
+    console.log(sortedComments);
+  });
+};
+
+Вызов:
+getSortedPostsCallback();
+getSortedCommentsCallback();
