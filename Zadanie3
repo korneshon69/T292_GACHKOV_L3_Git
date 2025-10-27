@@ -1,0 +1,161 @@
+const BASE_URL = 'https://jsonplaceholder.typicode.com';
+
+const fetchWithCallback = (url, callback) => {
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      callback(null, data);
+    })
+    .catch(error => {
+      callback(error, null);
+    });
+};
+
+const fetchData = (url) => {
+  return fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    });
+};
+
+const sortPostsByTitleLengthDesc = (posts) => {
+  return [...posts].sort((a, b) => b.title.length - a.title.length);
+};
+
+const sortCommentsByName = (comments) => {
+  return [...comments].sort((a, b) => a.name.localeCompare(b.name));
+};
+
+const filterUserFields = (users) => {
+  return users.map(user => ({
+    id: user.id,
+    name: user.name,
+    username: user.username,
+    email: user.email,
+    phone: user.phone
+  }));
+};
+
+const filterIncompleteTodos = (todos) => {
+  return todos.filter(todo => !todo.completed);
+};
+
+const getSortedPostsCallback = () => {
+  const url = `${BASE_URL}/posts`;
+
+  fetchWithCallback(url, (error, posts) => {
+    if (error) {
+      console.error('Ошибка в getSortedPostsCallback:', error.message);
+      return;
+    }
+    const sortedPosts = sortPostsByTitleLengthDesc(posts);
+    console.log('Посты, отсортированные по длине title (Callback)');
+    console.log(sortedPosts);
+  });
+};
+
+const getSortedCommentsCallback = () => {
+  const url = `${BASE_URL}/comments`;
+
+  fetchWithCallback(url, (error, comments) => {
+    if (error) {
+      console.error('Ошибка в getSortedCommentsCallback:', error.message);
+      return;
+    }
+    const sortedComments = sortCommentsByName(comments);
+    console.log('Комментарии, отсортированные по имени (Callback)');
+    console.log(sortedComments);
+  });
+};
+
+const getFilteredUsersPromise = () => {
+  const url = `${BASE_URL}/users`;
+
+  fetchData(url)
+    .then(users => {
+      return filterUserFields(users);
+    })
+    .then(filteredUsers => {
+      console.log('Пользователи с отфильтрованными полями (Promise)');
+      console.log(filteredUsers);
+    })
+    .catch(error => {
+      console.error('Ошибка в getFilteredUsersPromise:', error.message);
+    });
+};
+
+const getIncompleteTodosPromise = () => {
+  const url = `${BASE_URL}/todos`;
+
+  fetchData(url)
+    .then(filterIncompleteTodos)
+    .then(incompleteTodos => {
+      console.log('Незавершенные задачи (Promise)');
+      console.log(incompleteTodos);
+    })
+    .catch(error => {
+      console.error('Ошибка в getIncompleteTodosPromise:', error.message);
+    });
+};
+
+//Задание 3
+const getSortedPostsAsync = async () => {
+  const url = `${BASE_URL}/posts`;
+  try {
+    const posts = await fetchData(url);
+    const sortedPosts = sortPostsByTitleLengthDesc(posts);
+    console.log('(1a). Посты, отсортированные по длине title (Async/Await)');
+    console.log(sortedPosts);
+  } catch (error) {
+    console.error('Ошибка в getSortedPostsAsync:', error.message);
+  }
+};
+
+const getSortedCommentsAsync = async () => {
+  const url = `${BASE_URL}/comments`;
+  try {
+    const comments = await fetchData(url);
+    const sortedComments = sortCommentsByName(comments);
+    console.log('(1b). Комментарии, отсортированные по имени (Async/Await)');
+    console.log(sortedComments);
+  } catch (error) {
+    console.error('Ошибка в getSortedCommentsAsync:', error.message);
+  }
+};
+
+const getFilteredUsersAsync = async () => {
+  const url = `${BASE_URL}/users`;
+  try {
+    const users = await fetchData(url);
+    const filteredUsers = filterUserFields(users);
+    console.log('(2a). Пользователи с отфильтрованными полями (Async/Await)');
+    console.log(filteredUsers);
+  } catch (error) {
+    console.error('Ошибка в getFilteredUsersAsync:', error.message);
+  }
+};
+
+const getIncompleteTodosAsync = async () => {
+  const url = `${BASE_URL}/todos`;
+  try {
+    const todos = await fetchData(url);
+    const incompleteTodos = filterIncompleteTodos(todos);
+    console.log('(2b). Незавершенные задачи (Async/Await)');
+    console.log(incompleteTodos);
+  } catch (error) {
+    console.error('Ошибка в getIncompleteTodosAsync:', error.message);
+  }
+};
+
+getSortedPostsAsync();
+getSortedCommentsAsync();
+getFilteredUsersAsync();
+getIncompleteTodosAsync();
